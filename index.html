@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYS.SUNO_STUDIO // V6.0_WILD — DR.CONSTANTINE EDITION (v6 Optimized)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-void: #07080a;
+            --bg-panel: #0e1015;
+            --bg-card: #13161d;
+            --bg-input: #0a0c10;
+            --border-dim: #222734;
+            --border-bright: #384152;
+            --neon-cyan: #00f0ff;
+            --neon-amber: #ffaa00;
+            --neon-crimson: #ff2a54;
+            --neon-emerald: #00e676;
+            --text-main: #e2e8f0;
+            --text-muted: #8492a6;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-display: 'Space Grotesk', sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-void);
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.025) 1px, transparent 1px);
+            background-size: 28px 28px;
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+        nav.sidebar {
+            width: 320px;
+            min-width: 320px;
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border-dim);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .brand-box { border-bottom: 1px solid var(--border-dim); padding-bottom: 16px; margin-bottom: 16px; }
+        .sys-badge {
+            display: inline-block; font-size: 10px; color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan); padding: 2px 6px; letter-spacing: 1.5px;
+            margin-bottom: 8px; background: rgba(0, 240, 255, 0.06);
+        }
+        .brand-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.15; color: #fff; }
+        .brand-sub { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+        .nav-section-title { font-size: 11px; color: var(--neon-amber); letter-spacing: 1px; margin: 14px 0 8px 0; text-transform: uppercase; }
+        .nav-tabs { display: flex; flex-direction: column; gap: 6px; }
+        .nav-btn {
+            background: var(--bg-card); border: 1px solid var(--border-dim); color: var(--text-main);
+            padding: 10px 12px; text-align: left; font-family: var(--font-mono); font-size: 12px;
+            cursor: pointer; transition: all 0.15s ease; display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-btn:hover, .nav-btn.active { border-color: var(--neon-cyan); background: rgba(0, 240, 255, 0.08); color: #fff; }
+        .nav-btn .idx { color: var(--neon-cyan); font-size: 10px; }
+        .preset-list { display: flex; flex-direction: column; gap: 6px; }
+        .preset-btn {
+            background: var(--bg-input); border: 1px solid var(--border-dim); color: var(--text-muted);
+            padding: 8px 10px; text-align: left; font-family: var(--font-mono); font-size: 11px; cursor: pointer; transition: 0.15s;
+        }
+        .preset-btn:hover { border-color: var(--neon-amber); color: var(--neon-amber); }
+        .ai-config-box { margin-top: 20px; padding: 14px; background: var(--bg-input); border: 1px solid var(--border-dim); }
+        .ai-config-box h3 { font-size: 12px; color: var(--neon-cyan); margin-bottom: 10px; letter-spacing: 1px; }
+        .form-group { margin-bottom: 10px; }
+        .form-label { display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+        input[type="text"], input[type="password"], input[type="number"], select, textarea {
+            width: 100%; background: var(--bg-void); border: 1px solid var(--border-dim); color: var(--text-main);
+            padding: 8px 10px; font-family: var(--font-mono); font-size: 12px; outline: none;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--neon-cyan); }
+        main.workspace { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        header.compiler-bar {
+            position: sticky; top: 0; z-index: 90; background: rgba(14, 16, 21, 0.95);
+            backdrop-filter: blur(8px); border-bottom: 1px solid var(--border-bright); padding: 16px 24px;
+        }
+        .compiler-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+        .compiler-title { font-size: 12px; color: var(--neon-cyan); font-weight: 700; letter-spacing: 1px; }
+        .meter-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .char-counter {
+            font-size: 11px; padding: 3px 8px; border: 1px solid var(--neon-emerald);
+            color: var(--neon-emerald); background: rgba(0, 230, 118, 0.08);
+        }
+        .char-counter.warn { border-color: var(--neon-amber); color: var(--neon-amber); }
+        .char-counter.danger { border-color: var(--neon-crimson); color: var(--neon-crimson); }
+        .live-prompt-box {
+            width: 100%; background: var(--bg-void); border: 1px solid var(--neon-cyan);
+            padding: 12px 14px; color: #fff; font-size: 12.5px; min-height: 54px; word-break: break-word; margin-bottom: 8px;
+        }
+        .live-exclude-box { border-color: var(--neon-crimson); }
+        .action-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .btn {
+            background: var(--bg-card); border: 1px solid var(--border-bright); color: var(--text-main);
+            padding: 7px 14px; font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+            cursor: pointer; transition: 0.15s; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .btn:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+        .btn-primary { background: rgba(0, 240, 255, 0.14); border-color: var(--neon-cyan); color: var(--neon-cyan); }
+        .btn-primary:hover { background: var(--neon-cyan); color: #000; }
+        .btn-wild { background: rgba(255, 170, 0, 0.14); border-color: var(--neon-amber); color: var(--neon-amber); }
+        .btn-wild:hover { background: var(--neon-amber); color: #000; }
+        .content-area { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+        .module-panel { background: var(--bg-panel); border: 1px solid var(--border-dim); padding: 20px; position: relative; }
+        .module-panel::before, .module-panel::after {
+            content: ''; position: absolute; width: 10px; height: 10px;
+        }
+        .module-panel::before { top: -1px; left: -1px; border-top: 2px solid var(--neon-cyan); border-left: 2px solid var(--neon-cyan); }
+        .module-panel::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--neon-cyan); border-right: 2px solid var(--neon-cyan); }
+        .module-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-dim); padding-bottom: 12px; margin-bottom: 16px; }
+        .module-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+        .module-tag { font-size: 10px; color: var(--neon-amber); border: 1px solid var(--neon-amber); padding: 2px 6px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+        .chip-Category { margin-bottom: 14px; }
+        .chip-cat-label { font-size: 11px; color: var(--neon-cyan); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .chip-container { display: flex; flex-wrap: wrap; gap: 6px; }
+        .chip {
+            background: var(--bg-input); border: 1px solid var(--border-dim); color: var(--text-muted);
+            padding: 5px 10px; font-size: 11px; cursor: pointer; user-select: none; transition: all 0.12s;
+        }
+        .chip:hover { border-color: var(--border-bright); color: #fff; }
+        .chip.selected { background: rgba(0, 240, 255, 0.15); border-color: var(--neon-cyan); color: var(--neon-cyan); font-weight: 600; }
+        .chip.wild-chip.selected { background: rgba(255, 170, 0, 0.16); border-color: var(--neon-amber); color: var(--neon-amber); }
+        .chip.neg-chip.selected { background: rgba(255, 42, 84, 0.16); border-color: var(--neon-crimson); color: var(--neon-crimson); }
+        .chip.harm-chip.selected { background: rgba(0, 230, 118, 0.16); border-color: var(--neon-emerald); color: var(--neon-emerald); }
+        .slider-card { background: var(--bg-card); border: 1px solid var(--border-dim); padding: 12px; }
+        .slider-top { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; }
+        .slider-val { color: var(--neon-cyan); font-weight: 700; }
+        input[type="range"] { width: 100%; accent-color: var(--neon-cyan); cursor: pointer; }
+        .section-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+        .section-item { background: var(--bg-card); border: 1px solid var(--border-dim); padding: 12px; }
+        .section-bar { display: grid; grid-template-columns: 150px 95px 1fr auto; gap: 8px; margin-bottom: 8px; align-items: center; }
+        .toast {
+            position: fixed; bottom: 20px; right: 20px; background: var(--bg-panel);
+            border: 1px solid var(--neon-emerald); color: var(--neon-emerald); padding: 10px 16px;
+            font-size: 12px; z-index: 999; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+        }
+        .note { font-size: 10.5px; color: var(--text-muted); margin-top: 6px; }
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            nav.sidebar { width: 100%; height: auto; position: relative; }
+            .section-bar { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div>
+            <div class="brand-box">
+                <span class="sys-badge">SYS.LOOP_TYRANNI // V6.0_WILD</span>
+                <h1 class="brand-title">SUNO_STUDIO 6.0<br>WILD_ARCHITECT</h1>
+                <p class="brand-sub">v6.0.5 // Dr.Constantine Cyber-DSP · v6 Optimized</p>
+            </div>
+            <div class="nav-section-title">// MODUL_NAVIGASJON</div>
+            <div class="nav-tabs">
+                <button class="nav-btn active" onclick="scrollToSection('sec-style')"><span>01_SONIC_MATRIX</span><span class="idx">[V6]</span></button>
+                <button class="nav-btn" onclick="scrollToSection('sec-wild')"><span>02_WILD_MUTATORS</span><span class="idx">[DSP]</span></button>
+                <button class="nav-btn" onclick="scrollToSection('sec-studio')"><span>03_STUDIO_6.0_DAW</span><span class="idx">[STEM]</span></button>
+                <button class="nav-btn" onclick="scrollToSection('sec-lyrics')"><span>04_LYRIC_ARCHITECT</span><span class="idx">[BARS]</span></button>
+            </div>
+            <div class="nav-section-title">// DR.CONSTANTINE PRESETS</div>
+            <div class="preset-list">
+                <button class="preset-btn" onclick="loadPreset('tyranni')">⚡ LOOPENS_TYRANNI (Polyrhythm 7/8)</button>
+                <button class="preset-btn" onclick="loadPreset('cyber_gfunk')">🎹 NEON_G-FUNK // EIDSVOLL_NIGHT</button>
+                <button class="preset-btn" onclick="loadPreset('neuro_metal')">🎸 7-STRING_CYBER_DJENT (MAX)</button>
+                <button class="preset-btn" onclick="loadPreset('nordic_piano')">❄️ NORDIC_NOIR_SOLO_PIANO</button>
+                <button class="preset-btn" onclick="loadPreset('goa_142')">🌀 ASTRAL_GOA_303_OVERDRIVE</button>
+                <button class="preset-btn" onclick="loadPreset('harmonic_dark')">🜏 CIRCLE_OF_FIFTHS + TRITONE</button>
+            </div>
+        </div>
+        <div class="ai-config-box">
+            <h3>⚙ AI_KONFIG // MOTOR</h3>
+            <div class="form-group">
+                <label class="form-label">AI_PROVIDER</label>
+                <select id="aiProvider">
+                    <option value="gemini">Gemini 2.5 Flash (Google)</option>
+                    <option value="openai">GPT-4o (OpenAI)</option>
+                    <option value="anthropic">Claude 3.7 Sonnet</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">API_KEY (LOKAL LAGRING)</label>
+                <input type="password" id="apiKeyInput" placeholder="AIzaSy... / sk-..." />
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="saveApiKey()">LAGRE_KONFIG</button>
+            <p id="configStatus" style="font-size:10px; color:var(--neon-emerald); margin-top:6px; display:none;">// KONFIG_LAGRET_I_LOCALSTORAGE</p>
+            <p class="note">v6 tips: Variety → 0 for full kontroll. Style Influence høy. Exclude Styles er eget felt.</p>
+        </div>
+    </nav>
+
+    <main class="workspace">
+        <header class="compiler-bar">
+            <div class="compiler-top">
+                <div class="compiler-title">▶ SANNTIDS SUNO V6 STYLE + EXCLUDE COMPILER</div>
+                <div class="meter-group">
+                    <span id="conflictBadge" style="font-size:11px; color:var(--neon-emerald);">● INGEN_TAG_KONFLIKT</span>
+                    <span id="charCounter" class="char-counter">STYLE 0 / 1000</span>
+                    <span id="exclCounter" class="char-counter">EXCLUDE 0</span>
+                </div>
+            </div>
+            <div style="font-size:11px; color:var(--neon-cyan); margin-bottom:4px;">STYLE (positive only)</div>
+            <div id="liveStylePrompt" class="live-prompt-box"></div>
+            <div style="font-size:11px; color:var(--neon-crimson); margin-bottom:4px;">EXCLUDE STYLES (paste into Exclude field — plain terms)</div>
+            <div id="liveExcludePrompt" class="live-prompt-box live-exclude-box"></div>
+            <div class="action-row">
+                <button class="btn btn-primary" onclick="copyStylePrompt()">📋 KOPIER STYLE</button>
+                <button class="btn btn-primary" onclick="copyExclude()">🚫 KOPIER EXCLUDE</button>
+                <button class="btn btn-primary" onclick="copyFullPayload()">📦 KOPIER KOMPLETT (STYLE + EXCLUDE + LYRICS)</button>
+                <button class="btn btn-wild" onclick="mutateWild()">🎲 WILD_MUTATION</button>
+                <button class="btn" onclick="aiEnhancePrompt()">✨ AI_SYNTHESIZER</button>
+                <button class="btn" onclick="resetAll()">✖ NULLSTILL</button>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <section id="sec-style" class="module-panel">
+                <div class="module-header">
+                    <h2 class="module-title">01 // SONIC & HARMONIC MATRIX</h2>
+                    <span class="module-tag">SUNO_V6_CORE</span>
+                </div>
+                <div class="grid-4" style="margin-bottom: 18px;">
+                    <div class="form-group">
+                        <label class="form-label">BPM (TEMPO)</label>
+                        <input type="number" id="bpmInput" value="128" min="40" max="240" oninput="compilePrompt()" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">TONEART (KEY)</label>
+                        <select id="keySelect" onchange="compilePrompt()">
+                            <option value="C minor">C Minor</option>
+                            <option value="C# minor">C# Minor</option>
+                            <option value="D minor" selected>D Minor</option>
+                            <option value="D# Phrygian">D# Phrygian</option>
+                            <option value="E minor">E Minor</option>
+                            <option value="F minor">F Minor</option>
+                            <option value="F# minor">F# Minor</option>
+                            <option value="G minor">G Minor</option>
+                            <option value="A minor">A Minor</option>
+                            <option value="B Locrian">B Locrian</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">MODAL SKALA</label>
+                        <select id="scaleSelect" onchange="compilePrompt()">
+                            <option value="Dorian mode">Dorian Mode</option>
+                            <option value="Phrygian Dominant" selected>Phrygian Dominant</option>
+                            <option value="Harmonic Minor">Harmonic Minor</option>
+                            <option value="Lydian Augmented">Lydian Augmented</option>
+                            <option value="Octatonic Diminished">Octatonic Diminished</option>
+                            <option value="Microtonal Quarter-Tone">Microtonal 24-TET</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">TAKTARTER (LOOPENS FRIHET)</label>
+                        <select id="meterSelect" onchange="compilePrompt()">
+                            <option value="4/4 driving pulse">4/4 Driving Pulse</option>
+                            <option value="7/8 odd-meter groove" selected>7/8 Odd-Meter Groove</option>
+                            <option value="5/4 asymmetric prog">5/4 Asymmetric Prog</option>
+                            <option value="11/8 fractal polymeter">11/8 Fractal Polymeter</option>
+                            <option value="4:3 polyrhythmic cross-pulse">4:3 Polyrhythmic Cross-Pulse</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chip-Category">
+                    <div class="chip-cat-label">// SJANGER_KOLLISJONER</div>
+                    <div id="genreChips" class="chip-container"></div>
+                </div>
+                <div class="chip-Category">
+                    <div class="chip-cat-label">// HARDWARE SYNTH & INSTRUMENTERING</div>
+                    <div id="instChips" class="chip-container"></div>
+                </div>
+                <div class="chip-Category">
+                    <div class="chip-cat-label">// VOKAL_ARKITEKTUR & PERSONA</div>
+                    <div id="vocalChips" class="chip-container"></div>
+                </div>
+                <div class="chip-Category">
+                    <div class="chip-cat-label">// HARMONISK STYRING (CIRCLE OF FIFTHS + TRITONES)</div>
+                    <div id="harmChips" class="chip-container"></div>
+                </div>
+            </section>
+
+            <section id="sec-wild" class="module-panel">
+                <div class="module-header">
+                    <h2 class="module-title">02 // WILD DSP MUTATORS & EXCLUDE</h2>
+                    <span class="module-tag">LOOPENS_FRIHET</span>
+                </div>
+                <div class="chip-Category">
+                    <div class="chip-cat-label">// SUNO 6.0 WILD & EXPERIMENTAL DSP TAGS</div>
+                    <div id="wildChips" class="chip-container"></div>
+                </div>
+                <div class="chip-Category">
+                    <div class="chip-cat-label">// AKUSTISK ROM & MASTERINGKJEDE</div>
+                    <div id="prodChips" class="chip-container"></div>
+                </div>
+                <div class="chip-Category">
+                    <div class="chip-cat-label">// EXCLUDE STYLES (ren termer — lim inn i Exclude-feltet)</div>
+                    <div id="negChips" class="chip-container"></div>
+                </div>
+            </section>
+
+            <section id="sec-studio" class="module-panel">
+                <div class="module-header">
+                    <h2 class="module-title">03 // SUNO STUDIO 6.0 DAW & SLIDER MATRIX</h2>
+                    <span class="module-tag">DAW_INTEGRATION</span>
+                </div>
+                <div class="grid-4">
+                    <div class="slider-card">
+                        <div class="slider-top"><span>WEIRDNESS_INDEX</span><span id="weirdVal" class="slider-val">55%</span></div>
+                        <input type="range" id="weirdSlider" min="0" max="100" value="55" oninput="updateSliders()" />
+                    </div>
+                    <div class="slider-card">
+                        <div class="slider-top"><span>VARIETY_SLIDER (sett lav for kontroll)</span><span id="varietyVal" class="slider-val">15%</span></div>
+                        <input type="range" id="varietySlider" min="0" max="100" value="15" oninput="updateSliders()" />
+                    </div>
+                    <div class="slider-card">
+                        <div class="slider-top"><span>STYLE_INFLUENCE</span><span id="influenceVal" class="slider-val">82%</span></div>
+                        <input type="range" id="influenceSlider" min="0" max="100" value="82" oninput="updateSliders()" />
+                    </div>
+                    <div class="slider-card">
+                        <div class="slider-top"><span>STUDIO_STEM_MODE</span><span class="slider-val">MAX // 12 STEMS</span></div>
+                        <select id="stemModeSelect" onchange="compilePrompt()">
+                            <option value="discrete multi-stem separation ready, clean transient isolation" selected>12-Stem Discrete Isolation</option>
+                            <option value="raw analog bus glue, tape-saturated master">Analog Bus Glue Master</option>
+                            <option value="MIDI-quantized transient precision, dry stem clarity">MIDI Extraction Optimized</option>
+                        </select>
+                    </div>
+                </div>
+                <p class="note" style="margin-top:12px;">Anbefaling v6: Variety nær 0 når du vil ha prompten din nøyaktig. Style Influence 75–85+. Weirdness ~50 er nøytralt.</p>
+            </section>
+
+            <section id="sec-lyrics" class="module-panel">
+                <div class="module-header">
+                    <h2 class="module-title">04 // BAR-MAPPED LYRIC & META-TAG ARCHITECT</h2>
+                    <span id="totalBarsBadge" class="module-tag">TOTALT: 32 BARS</span>
+                </div>
+                <div id="sectionContainer" class="section-list"></div>
+                <div class="action-row" style="margin-bottom: 16px;">
+                    <button class="btn btn-primary" onclick="addSection('Intro', 8, 'Dark analog drone, glitch percussion build')">+ INTRO</button>
+                    <button class="btn btn-primary" onclick="addSection('Verse', 16, 'Tight syncopated bassline, whispered cyber-vocal')">+ VERSE</button>
+                    <button class="btn btn-primary" onclick="addSection('Pre-Chorus', 8, 'Rising tension, filter sweep, snare roll')">+ PRE-CHORUS</button>
+                    <button class="btn btn-primary" onclick="addSection('Chorus', 16, 'Massive wide synth wall, soaring hook, heavy sub')">+ CHORUS</button>
+                    <button class="btn btn-wild" onclick="addSection('Polyrhythmic Breakdown', 8, '7/8 metric modulation, granular glitch solo')">+ WILD BREAKDOWN</button>
+                    <button class="btn" onclick="addSection('Outro', 8, 'Tape power-down stop, decaying reverb tail')">+ OUTRO</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">// KOMPILERT SUNO V6 LYRICS & META-SCRIPT</label>
+                    <textarea id="compiledLyrics" rows="11" readonly></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="copyLyricsOnly()">📋 KOPIER KUN LYRICS & META-TAGS</button>
+            </section>
+        </div>
+    </main>
+
+    <div id="toast" class="toast">KOPIERT TIL UTKLIPPSTAVLEN</div>
+
+    <script>
+        const CATALOG = {
+            genres: [
+                "Industrial Cyber-Techno", "Minimal Instrumental Techno", "Dark Synthwave",
+                "West Coast G-Funk", "90s Boom-Bap", "Progressive Goa Trance",
+                "7-String Djent Nu-Metal", "Nordic Noir Solo Piano", "IDM Glitchcore",
+                "Darkjazz Dub", "Acid Breaks", "Cinematic Cyberpunk Orchestral"
+            ],
+            instruments: [
+                "Virus TI hyperspectral wavetable lead", "Prophet V2 brass pad",
+                "Roland FA-06 arpeggiator", "Elektron Analog Rytm poly-drums",
+                "ESP 7-string drop-A chugs", "Fender Strat glassy clean",
+                "TB-303 resonant acid squelch", "Moog Sub-37 seismic bass",
+                "Felt upright Nordic piano", "Fretless sub-bass"
+            ],
+            vocals: [
+                "Instrumental only", "Deep baritone spoken-word philosophy",
+                "Ethereal Nordic female soprano", "Aggressive vocoder cyber-choir",
+                "Gritty West Coast rap cadence", "Whispered binaural ASMR textures"
+            ],
+            wild: [
+                "non-repetitive through-composed form", "Sudden metric modulation",
+                "granular time-stretch freeze", "tape-stop pitch dive",
+                "microtonal pitch-drift", "bitcrushed DSP artifacts",
+                "algorithmic breakcore fills", "negative-space silence drop"
+            ],
+            prod: [
+                "Universal Audio Apollo 8 preamp warmth", "Dolby Atmos 3D binaural width",
+                "surgical sidechain compression", "ribbon mic room air",
+                "analog tape saturation", "ultra-crisp sub-30Hz low end"
+            ],
+            harm: [
+                "sophisticated harmonic movement following the circle of fifths",
+                "descending fifths basslines and smooth circle-of-fifths progressions",
+                "tense tritone intervals and diabolus in musica dissonance",
+                "tritone substitution and dominant tension with satisfying resolution",
+                "ominous tritone-laden riffs that resolve dramatically",
+                "rich harmonic landscape with fifths backbone and tritone emotional depth"
+            ],
+            neg: [
+                "muddy low-mids", "generic 4-bar loop repetition",
+                "cheesy EDM supersaws", "brickwall clipping",
+                "plastic MIDI horns", "vocal sibilance",
+                "autotune", "generic pop drums"
+            ]
+        };
+
+        const STATE = {
+            genres: new Set(["Industrial Cyber-Techno", "IDM Glitchcore"]),
+            instruments: new Set(["Virus TI hyperspectral wavetable lead", "Elektron Analog Rytm poly-drums", "Moog Sub-37 seismic bass"]),
+            vocals: new Set(["Deep baritone spoken-word philosophy"]),
+            wild: new Set(["non-repetitive through-composed form", "Sudden metric modulation", "granular time-stretch freeze"]),
+            prod: new Set(["Universal Audio Apollo 8 preamp warmth", "Dolby Atmos 3D binaural width"]),
+            harm: new Set(["sophisticated harmonic movement following the circle of fifths", "tense tritone intervals and diabolus in musica dissonance"]),
+            neg: new Set(["generic 4-bar loop repetition", "muddy low-mids"]),
+            sections: [
+                {
+                    type: "Intro",
+                    bars: 8,
+                    cue: "7/8 odd-meter Elektron percussion, dark Virus TI drone, vinyl crackle",
+                    lyrics: "[Instrumental Intro: Sub-bass pulse locks into asymmetric 7/8 grid]"
+                },
+                {
+                    type: "Verse",
+                    bars: 16,
+                    cue: "Dry baritone spoken word, sparse modular clicks, fretless sub",
+                    lyrics: "Vi bryter ut av fire-fire-tvangen,\nfirkanter sprekker i algoritmesangen.\nLoopens tyranni faller i grus,\nnår spøkelset våkner i maskinens hus."
+                },
+                {
+                    type: "Polyrhythmic Breakdown",
+                    bars: 8,
+                    cue: "Sudden metric modulation to 5/4, granular time-stretch freeze, analog acid filter sweep",
+                    lyrics: "[DSP Glitch Solo: Micro-sliced breakbeats collide with Prophet brass swells]"
+                }
+            ]
+        };
+
+        function initApp() {
+            const savedKey = localStorage.getItem('dr_constantine_api_key');
+            if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
+
+            renderChipGroup('genreChips', CATALOG.genres, STATE.genres, '');
+            renderChipGroup('instChips', CATALOG.instruments, STATE.instruments, '');
+            renderChipGroup('vocalChips', CATALOG.vocals, STATE.vocals, '');
+            renderChipGroup('wildChips', CATALOG.wild, STATE.wild, 'wild-chip');
+            renderChipGroup('prodChips', CATALOG.prod, STATE.prod, '');
+            renderChipGroup('harmChips', CATALOG.harm, STATE.harm, 'harm-chip');
+            renderChipGroup('negChips', CATALOG.neg, STATE.neg, 'neg-chip');
+
+            renderSections();
+            compilePrompt();
+        }
+
+        function renderChipGroup(containerId, items, activeSet, extraClass) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            items.forEach(item => {
+                const span = document.createElement('span');
+                span.className = 'chip ' + extraClass + (activeSet.has(item) ? ' selected' : '');
+                span.textContent = item;
+                span.onclick = () => {
+                    if (activeSet.has(item)) activeSet.delete(item);
+                    else activeSet.add(item);
+                    renderChipGroup(containerId, items, activeSet, extraClass);
+                    compilePrompt();
+                };
+                container.appendChild(span);
+            });
+        }
+
+        function updateSliders() {
+            document.getElementById('weirdVal').textContent = document.getElementById('weirdSlider').value + '%';
+            document.getElementById('varietyVal').textContent = document.getElementById('varietySlider').value + '%';
+            document.getElementById('influenceVal').textContent = document.getElementById('influenceSlider').value + '%';
+            compilePrompt();
+        }
+
+        function compilePrompt() {
+            const bpm = document.getElementById('bpmInput').value || 128;
+            const key = document.getElementById('keySelect').value;
+            const scale = document.getElementById('scaleSelect').value;
+            const meter = document.getElementById('meterSelect').value;
+            const stemMode = document.getElementById('stemModeSelect').value;
+            const weird = parseInt(document.getElementById('weirdSlider').value, 10);
+            const variety = parseInt(document.getElementById('varietySlider').value, 10);
+
+            let parts = [];
+            if (STATE.genres.size) parts.push(Array.from(STATE.genres).join(', '));
+            parts.push(`${bpm} BPM`, key, scale, meter);
+            if (STATE.instruments.size) parts.push(Array.from(STATE.instruments).join(', '));
+            if (STATE.vocals.size) parts.push(Array.from(STATE.vocals).join(', '));
+            if (STATE.harm.size) parts.push(Array.from(STATE.harm).join(', '));
+            if (STATE.wild.size) parts.push(Array.from(STATE.wild).join(', '));
+
+            if (weird >= 70) parts.push('avant-garde structural unpredictability');
+            if (variety <= 20) parts.push('precise prompt adherence, no style rewriting');
+
+            if (STATE.prod.size) parts.push(Array.from(STATE.prod).join(', '));
+            parts.push(stemMode);
+
+            const finalPrompt = parts.filter(Boolean).join(', ');
+            document.getElementById('liveStylePrompt').textContent = finalPrompt;
+
+            const excludeList = Array.from(STATE.neg).join(', ');
+            document.getElementById('liveExcludePrompt').textContent = excludeList || '(ingen)';
+
+            const len = finalPrompt.length;
+            const counterEl = document.getElementById('charCounter');
+            counterEl.textContent = `STYLE ${len} / 1000`;
+            counterEl.className = 'char-counter' + (len > 950 ? ' danger' : len > 800 ? ' warn' : '');
+
+            const exclEl = document.getElementById('exclCounter');
+            exclEl.textContent = `EXCLUDE ${excludeList.length}`;
+
+            const badge = document.getElementById('conflictBadge');
+            if (STATE.vocals.has("Instrumental only") && STATE.vocals.size > 1) {
+                badge.textContent = '⚠ KONFLIKT: INSTRUMENTAL + VOKAL';
+                badge.style.color = 'var(--neon-amber)';
+            } else {
+                badge.textContent = '● INGEN_TAG_KONFLIKT';
+                badge.style.color = 'var(--neon-emerald)';
+            }
+
+            compileLyrics();
+        }
+
+        function renderSections() {
+            const container = document.getElementById('sectionContainer');
+            container.innerHTML = '';
+            let totalBars = 0;
+            STATE.sections.forEach((sec, idx) => {
+                totalBars += Number(sec.bars) || 0;
+                const div = document.createElement('div');
+                div.className = 'section-item';
+                div.innerHTML = `
+                    <div class="section-bar">
+                        <input type="text" value="${sec.type}" oninput="updateSec(${idx}, 'type', this.value)" placeholder="Seksjon" />
+                        <input type="number" value="${sec.bars}" min="2" max="64" oninput="updateSec(${idx}, 'bars', this.value)" placeholder="Bars" />
+                        <input type="text" value="${sec.cue}" oninput="updateSec(${idx}, 'cue', this.value)" placeholder="Suno v6 direktiv" />
+                        <button class="btn" onclick="removeSec(${idx})">✖</button>
+                    </div>
+                    <textarea rows="2" oninput="updateSec(${idx}, 'lyrics', this.value)" placeholder="Tekst eller [Instrumental]...">${sec.lyrics}</textarea>
+                `;
+                container.appendChild(div);
+            });
+            document.getElementById('totalBarsBadge').textContent = `TOTALT: ${totalBars} BARS`;
+            compileLyrics();
+        }
+
+        function updateSec(idx, field, val) {
+            STATE.sections[idx][field] = val;
+            if (field === 'bars') {
+                const total = STATE.sections.reduce((acc, s) => acc + (Number(s.bars) || 0), 0);
+                document.getElementById('totalBarsBadge').textContent = `TOTALT: ${total} BARS`;
+            }
+            compileLyrics();
+        }
+
+        function removeSec(idx) {
+            STATE.sections.splice(idx, 1);
+            renderSections();
+        }
+
+        function addSection(type, bars, cue) {
+            STATE.sections.push({ type, bars, cue, lyrics: `[${type}: Evolving dynamic texture]` });
+            renderSections();
+        }
+
+        function compileLyrics() {
+            const blocks = STATE.sections.map(sec => `[${sec.type}: ${sec.bars} bars | ${sec.cue}]\n${sec.lyrics}`);
+            document.getElementById('compiledLyrics').value = blocks.join('\n\n');
+        }
+
+        function loadPreset(name) {
+            if (name === 'tyranni') {
+                document.getElementById('bpmInput').value = 132;
+                document.getElementById('keySelect').value = 'D minor';
+                document.getElementById('scaleSelect').value = 'Phrygian Dominant';
+                document.getElementById('meterSelect').value = '7/8 odd-meter groove';
+                STATE.genres = new Set(["Industrial Cyber-Techno", "IDM Glitchcore"]);
+                STATE.instruments = new Set(["Virus TI hyperspectral wavetable lead", "Elektron Analog Rytm poly-drums", "Moog Sub-37 seismic bass"]);
+                STATE.vocals = new Set(["Deep baritone spoken-word philosophy"]);
+                STATE.wild = new Set(["non-repetitive through-composed form", "Sudden metric modulation", "granular time-stretch freeze"]);
+                STATE.harm = new Set(["sophisticated harmonic movement following the circle of fifths", "tense tritone intervals and diabolus in musica dissonance"]);
+            } else if (name === 'cyber_gfunk') {
+                document.getElementById('bpmInput').value = 94;
+                document.getElementById('keySelect').value = 'C minor';
+                document.getElementById('scaleSelect').value = 'Dorian mode';
+                document.getElementById('meterSelect').value = '4/4 driving pulse';
+                STATE.genres = new Set(["West Coast G-Funk", "Dark Synthwave"]);
+                STATE.instruments = new Set(["Prophet V2 brass pad", "Moog Sub-37 seismic bass", "Fender Strat glassy clean"]);
+                STATE.vocals = new Set(["Gritty West Coast rap cadence", "Aggressive vocoder cyber-choir"]);
+                STATE.wild = new Set(["tape-stop pitch dive", "negative-space silence drop"]);
+                STATE.harm = new Set(["descending fifths basslines and smooth circle-of-fifths progressions"]);
+            } else if (name === 'neuro_metal') {
+                document.getElementById('bpmInput').value = 145;
+                document.getElementById('keySelect').value = 'F# minor';
+                document.getElementById('scaleSelect').value = 'Harmonic Minor';
+                document.getElementById('meterSelect').value = '4:3 polyrhythmic cross-pulse';
+                STATE.genres = new Set(["7-String Djent Nu-Metal", "Industrial Cyber-Techno"]);
+                STATE.instruments = new Set(["ESP 7-string drop-A chugs", "Elektron Analog Rytm poly-drums", "Virus TI hyperspectral wavetable lead"]);
+                STATE.vocals = new Set(["Aggressive vocoder cyber-choir"]);
+                STATE.wild = new Set(["Sudden metric modulation", "bitcrushed DSP artifacts"]);
+                STATE.harm = new Set(["ominous tritone-laden riffs that resolve dramatically"]);
+            } else if (name === 'nordic_piano') {
+                document.getElementById('bpmInput').value = 72;
+                document.getElementById('keySelect').value = 'A minor';
+                document.getElementById('scaleSelect').value = 'Harmonic Minor';
+                document.getElementById('meterSelect').value = '5/4 asymmetric prog';
+                STATE.genres = new Set(["Nordic Noir Solo Piano", "Cinematic Cyberpunk Orchestral"]);
+                STATE.instruments = new Set(["Felt upright Nordic piano", "Fretless sub-bass"]);
+                STATE.vocals = new Set(["Instrumental only"]);
+                STATE.wild = new Set(["non-repetitive through-composed form", "negative-space silence drop"]);
+                STATE.harm = new Set(["sophisticated harmonic movement following the circle of fifths"]);
+            } else if (name === 'goa_142') {
+                document.getElementById('bpmInput').value = 142;
+                document.getElementById('keySelect').value = 'D# Phrygian';
+                document.getElementById('scaleSelect').value = 'Phrygian Dominant';
+                document.getElementById('meterSelect').value = '4/4 driving pulse';
+                STATE.genres = new Set(["Progressive Goa Trance", "Acid Breaks"]);
+                STATE.instruments = new Set(["TB-303 resonant acid squelch", "Virus TI hyperspectral wavetable lead", "Roland FA-06 arpeggiator"]);
+                STATE.vocals = new Set(["Ethereal Nordic female soprano"]);
+                STATE.wild = new Set(["microtonal pitch-drift", "granular time-stretch freeze"]);
+                STATE.harm = new Set(["tense tritone intervals and diabolus in musica dissonance"]);
+            } else if (name === 'harmonic_dark') {
+                document.getElementById('bpmInput').value = 108;
+                document.getElementById('keySelect').value = 'D minor';
+                document.getElementById('scaleSelect').value = 'Harmonic Minor';
+                document.getElementById('meterSelect').value = '5/4 asymmetric prog';
+                STATE.genres = new Set(["Darkjazz Dub", "Cinematic Cyberpunk Orchestral"]);
+                STATE.instruments = new Set(["Felt upright Nordic piano", "Fretless sub-bass", "Prophet V2 brass pad"]);
+                STATE.vocals = new Set(["Deep baritone spoken-word philosophy"]);
+                STATE.wild = new Set(["non-repetitive through-composed form"]);
+                STATE.harm = new Set([
+                    "sophisticated harmonic movement following the circle of fifths",
+                    "descending fifths basslines and smooth circle-of-fifths progressions",
+                    "tense tritone intervals and diabolus in musica dissonance",
+                    "rich harmonic landscape with fifths backbone and tritone emotional depth"
+                ]);
+            }
+            initApp();
+            showToast(`PRESET LASTET: ${name.toUpperCase()}`);
+        }
+
+        function mutateWild() {
+            const pickRandom = (arr, count) => {
+                const shuffled = [...arr].sort(() => 0.5 - Math.random());
+                return new Set(shuffled.slice(0, count));
+            };
+            document.getElementById('bpmInput').value = Math.floor(Math.random() * (165 - 78) + 78);
+            STATE.genres = pickRandom(CATALOG.genres, 2);
+            STATE.instruments = pickRandom(CATALOG.instruments, 3);
+            STATE.wild = pickRandom(CATALOG.wild, 3);
+            STATE.harm = pickRandom(CATALOG.harm, 2);
+            initApp();
+            showToast('🎲 WILD MUTATION AKTIVERT');
+        }
+
+        function resetAll() {
+            STATE.genres.clear(); STATE.instruments.clear(); STATE.vocals.clear();
+            STATE.wild.clear(); STATE.harm.clear(); STATE.neg.clear();
+            initApp();
+            showToast('KOMPILATOR NULLSTILT');
+        }
+
+        function copyStylePrompt() {
+            navigator.clipboard.writeText(document.getElementById('liveStylePrompt').textContent);
+            showToast('STYLE PROMPT KOPIERT');
+        }
+        function copyExclude() {
+            const t = document.getElementById('liveExcludePrompt').textContent;
+            navigator.clipboard.writeText(t === '(ingen)' ? '' : t);
+            showToast('EXCLUDE STYLES KOPIERT');
+        }
+        function copyLyricsOnly() {
+            navigator.clipboard.writeText(document.getElementById('compiledLyrics').value);
+            showToast('LYRICS & META-TAGS KOPIERT');
+        }
+        function copyFullPayload() {
+            const style = document.getElementById('liveStylePrompt').textContent;
+            const excl = document.getElementById('liveExcludePrompt').textContent;
+            const lyrics = document.getElementById('compiledLyrics').value;
+            const full = `=== SUNO V6 STYLE (positive) ===\n${style}\n\n=== SUNO V6 EXCLUDE STYLES ===\n${excl === '(ingen)' ? '' : excl}\n\n=== SUNO V6 BAR-MAPPED LYRICS ===\n${lyrics}`;
+            navigator.clipboard.writeText(full);
+            showToast('KOMPLETT V6 PAYLOAD KOPIERT');
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            localStorage.setItem('dr_constantine_api_key', key);
+            const status = document.getElementById('configStatus');
+            status.style.display = 'block';
+            setTimeout(() => { status.style.display = 'none'; }, 3000);
+        }
+
+        async function aiEnhancePrompt() {
+            const key = document.getElementById('apiKeyInput').value.trim() || localStorage.getItem('dr_constantine_api_key');
+            const currentPrompt = document.getElementById('liveStylePrompt').textContent;
+            const currentExcl = document.getElementById('liveExcludePrompt').textContent;
+            if (!key) { showToast('LEGG INN API-NØKKEL FØRST'); return; }
+            showToast('⚡ KONTAKTER AI...');
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Act as an elite Suno v6 Wild Audio Architect. Refine this Style prompt (keep under 950 chars, positive only, front-load genre/BPM/key/instruments). Also refine the Exclude list (plain terms, no "no"). Output EXACTLY in this format:\nSTYLE:\n[refined style]\nEXCLUDE:\n[refined exclude]\n\nCurrent STYLE:\n${currentPrompt}\n\nCurrent EXCLUDE:\n${currentExcl}`
+                            }]
+                        }]
+                    })
+                });
+                const data = await res.json();
+                const refined = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (refined) {
+                    const styleMatch = refined.match(/STYLE:\s*([\s\S]*?)(?:\nEXCLUDE:|$)/i);
+                    const exclMatch = refined.match(/EXCLUDE:\s*([\s\S]*)$/i);
+                    if (styleMatch) document.getElementById('liveStylePrompt').textContent = styleMatch[1].trim();
+                    if (exclMatch) document.getElementById('liveExcludePrompt').textContent = exclMatch[1].trim() || '(ingen)';
+                    showToast('✨ AI-OPTIMALISERING FULLFØRT');
+                } else {
+                    showToast('FEIL VED AI-RESPONS');
+                }
+            } catch (e) {
+                showToast('NETTVERKSFEIL MOT AI');
+            }
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 2400);
+        }
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
